@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body id="body">
+
+    <script>
+        const body = document.getElementById("body");
+        const string = "x";
+        let abc = ['a', 'b', 'c', 'd', 'e', 'g', 'h', 'k', 'n', 'o', 'p', 'q', 'r', 's', 'u', 'v', 'x', 'y', 'z']
+        let firstClick = null;
+        let secondClick = null;
+        const larguraFonte = 8;
+        const alturaLinha = 18;
+        let conteudo = '';
+        let numColunas;
+        let ultimaposicao = null;
+
+        function sorteiaLetra() {
+            var sorteia = Math.floor(Math.random() * abc.length);
+            return abc[sorteia]
+        }
+
+        function criaTela() {
+
+            const largura = window.innerWidth;
+            const altura = window.innerHeight;
+
+            numColunas = Math.floor(largura / larguraFonte);
+            const numLinhas = Math.floor(altura / alturaLinha);
+            conteudo = '';
+
+            console.log(numColunas)
+            console.log(numLinhas)
+
+            for (let i = 0; i < numLinhas; i++) {
+                for (let j = 0; j < numColunas; j++) {
+                    conteudo += string;
+                }
+                conteudo += '\n';
+            }
+            body.innerHTML = conteudo;
+        }
+
+        function calculaPosicao(e) {
+            const x = Math.floor(e.pageX / larguraFonte);
+            console.log(x)
+            const y = Math.floor(e.pageY / alturaLinha);
+            console.log(y)
+            return y * (numColunas + 1) + x;
+        }
+
+        function mouseClick(e) {
+
+            let letra = sorteiaLetra();
+            const result = calculaPosicao(e)
+
+            if (result >= 0 && result < conteudo.length) {
+                const character = body.textContent.split('');
+                character[result] = letra;
+                if (firstClick === null) {
+                    firstClick = {
+                        letra: character[result],
+                        index: result
+                    };
+
+                }
+
+                else if (secondClick === null && result !== firstClick.index) {
+                    secondClick = {
+                        letra: character[result],
+                        index: result
+                    }
+                    console.log(secondClick.letra)
+                    if (firstClick.letra === secondClick.letra) {
+                        character[firstClick.index] = null;
+                        character[secondClick.index] = null;
+                        console.log("Apagando...")
+                    }
+                    else {
+                        character[firstClick.index] = string
+                        character[secondClick.index] = string
+                        console.log("reset x")
+                    }
+                    firstClick = null;
+                    secondClick = null;
+                }
+                body.textContent = character.join('')
+            }
+        }
+
+        function mouseOver(e) {
+            const result = calculaPosicao(e)
+
+            if (result >= 0 && result < conteudo.length) {
+                const character = body.textContent.split('');
+                const letra = sorteiaLetra()
+                if (character[result] === string) {
+                    character[result] = letra;
+                    body.textContent = character.join('');
+
+                    ultimaposicao = result;
+                }
+            }
+        }
+
+        function mouseLeave(e) {
+            const result = calculaPosicao(e)
+            const character = body.textContent.split('');
+            
+            if (ultimaposicao !== null && ultimaposicao !== result) {
+                character[ultimaposicao] = string;
+                body.textContent = character.join('');
+            }
+
+            if (result >= 0 && result < conteudo.length && character[result] === string) {
+                const letra = sorteiaLetra();
+                character[result] = letra;
+                body.textContent = character.join('');
+                ultimaposicao = result;
+            }
+        }
+
+        function caracterX() {
+            document.body.style.padding = 0;
+            document.body.style.margin = 0;
+
+            criaTela();
+
+            body.addEventListener("mousedown", mouseClick);
+            // body.addEventListener("mouseover", mouseOver);
+            body.addEventListener("mousemove", mouseLeave);
+        }
+
+        window.onload = caracterX
+        window.onresize = caracterX
+
+    </script>
+</body>
+
+</html>

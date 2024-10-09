@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>    
+</head>
+
+<body>
+    <span id="span"></span>
+    <script>
+        const span = document.getElementById("span");
+        const string = "x";
+        let abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'x', 'y', 'z']
+        let firstClick = null;
+        let secondClick = null;
+        function sorteiaLetra() {
+            var sorteia = Math.floor(Math.random() * abc.length);
+            return abc[sorteia]
+        }
+
+        function caracterX() {
+            document.body.style.padding = 0;
+            document.body.style.margin = 0;
+
+            const largura = window.innerWidth;
+            const altura = window.innerHeight;
+
+            const numColunas = Math.floor(largura / 8);
+            const numLinhas = Math.floor(altura / 18);
+
+            let conteudo = '';
+
+            for (let i = 0; i < numLinhas; i++) {
+                for (let j = 0; j < numColunas; j++) {
+                    conteudo += `<span class="alter">${string}</span>`;
+                }
+                conteudo += '\n';
+            }
+            span.innerHTML = conteudo;
+
+
+            const alterChar = document.querySelectorAll('.alter');
+            alterChar.forEach(character => {
+                let permanente = false;
+                character.addEventListener("mouseover", () => {
+                    let letra = sorteiaLetra();
+                    if (!permanente) {
+                        character.textContent = letra
+                    }
+                });
+                character.addEventListener("mouseleave", () => {
+                    if (!permanente) {
+                        character.textContent = 'x'
+                    }
+                });
+
+                character.addEventListener("mousedown", () => {
+                    if (firstClick === null) {
+                        firstClick = character
+                        console.log(firstClick.textContent)
+                    }
+
+                    else if (secondClick === null && character !== firstClick) {
+                        secondClick = character;
+                        console.log(secondClick.textContent)
+                        if (firstClick.textContent === secondClick.textContent) {                            
+                            firstClick.textContent = null
+                            secondClick.textContent = null
+                            
+                            firstClick = null;
+                            secondClick = null;                            
+                        }
+                        else {
+                            firstClick.textContent = "x";                            
+                            secondClick.textContent = "x";
+                        }
+                        firstClick = null;
+                        secondClick = null;                        
+                    }
+                    permanente = true                    
+
+                })
+            });
+        }        
+
+        window.onload = caracterX
+        window.onresize = caracterX
+    </script>
+</body>
+
+</html>
